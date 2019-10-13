@@ -9,12 +9,26 @@
     <Authors>Abdul Rahman (@fingers10)</Authors>
     <Description>Classes to generate Excel Report in ASP.NET</Description>
     <PackageTags>Excel Export</PackageTags>
+    <PackageProjectUrl>https://github.com/fingers10/ExcelExport</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/fingers10/ExcelExport</RepositoryUrl>
+    <RepositoryType>Public</RepositoryType>
+    <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+    <PackageLicenseExpression></PackageLicenseExpression>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <Copyright>Copyright (c) 2019 Abdul Rahman</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.94.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
