@@ -9,6 +9,7 @@
     <Authors>Abdul Rahman (@fingers10)</Authors>
     <Description>Classes to generate Excel Report in ASP.NET</Description>
     <PackageTags>Excel Export</PackageTags>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageProjectUrl>https://github.com/fingers10/ExcelExport</PackageProjectUrl>
     <RepositoryUrl>https://github.com/fingers10/ExcelExport</RepositoryUrl>
     <RepositoryType>Public</RepositoryType>
