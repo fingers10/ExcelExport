@@ -15,14 +15,14 @@
 [![GitHub issues-closed](https://img.shields.io/github/issues-closed/fingers10/ExcelExport.svg)](https://GitHub.com/fingers10/ExcelExport/issues?q=is%3Aissue+is%3Aclosed)
 
 # Excel Export
-Simple classes to generate Excel Report in ASP.NET Core
+Simple classes to generate Excel Report in ASP.NET Core.
+
+To export/download the `IEnumerable<T>` data as an excel file, add action method in your controller as shown below. Return the data as `ExcelResult<T>` by passing filtered/ordered data, excel sheet name and excel file name. **ExcelResult** Action Result that I have added in the Nuget package. This will take care of converting your data as excel file and return it back to browser.
 
 >**Note: This tutorial contains example for downloading/exporting excel from Asp.Net Core Backend.**
 
 # Give a Star ⭐️
 If you liked `ExcelExport` project or if it helped you, please give a star ⭐️ for this repository. That will not only help strengthen our .NET community but also improve development skills for .NET developers in around the world. Thank you very much 👍
-
-To exporting the `IEnumerable<T>` data as an excel file, add action method in your controller as shown below. Return the data as `ExcelResult<T>` by passing filtered/ordered data, excel sheet name and excel file name. **ExcelResult** Action Result that I have added in the Nuget package. This will take care of converting your data as excel file and return it back to browser.
 
 # Column Name
 Column names in Excel Export can be configured using the below attributes
