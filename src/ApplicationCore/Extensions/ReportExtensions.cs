@@ -19,9 +19,12 @@ namespace Fingers10.ExcelExport.Extensions
             {
                 foreach (var prop in properties)
                 {
-                    var propertyDescriptor = prop.GetPropertyDescriptor();
-                    var displayName = prop.GetPropertyDisplayName();
-                    table.Columns.Add(displayName, Nullable.GetUnderlyingType(propertyDescriptor.PropertyType) ?? propertyDescriptor.PropertyType);
+                    if (prop.IncludePropertyInTable())
+                    {
+                        var propertyDescriptor = prop.GetPropertyDescriptor();
+                        var displayName = prop.GetPropertyDisplayName();
+                        table.Columns.Add(displayName, Nullable.GetUnderlyingType(propertyDescriptor.PropertyType) ?? propertyDescriptor.PropertyType);
+                    }
                 }
 
                 foreach (T item in data)
@@ -29,9 +32,12 @@ namespace Fingers10.ExcelExport.Extensions
                     var row = table.NewRow();
                     foreach (var prop in properties)
                     {
-                        var propertyDescriptor = prop.GetPropertyDescriptor();
-                        var displayName = prop.GetPropertyDisplayName();
-                        row[displayName] = propertyDescriptor.GetValue(item) ?? DBNull.Value;
+                        if (prop.IncludePropertyInTable())
+                        {
+                            var propertyDescriptor = prop.GetPropertyDescriptor();
+                            var displayName = prop.GetPropertyDisplayName();
+                            row[displayName] = propertyDescriptor.GetValue(item) ?? DBNull.Value;
+                        }
                     }
 
                     table.Rows.Add(row);
