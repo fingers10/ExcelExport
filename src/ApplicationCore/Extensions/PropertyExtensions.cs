@@ -20,5 +20,13 @@ namespace Fingers10.ExcelExport.Extensions
 
             return displayName ?? propertyDescriptor.DisplayName ?? propertyDescriptor.Name;
         }
+
+        public static bool IncludePropertyInTable(this PropertyInfo propertyInfo)
+        {
+            var includeProperty = propertyInfo.IsDefined(typeof(IncludeInReportAttribute), false) ? propertyInfo.GetCustomAttributes(typeof(IncludeInReportAttribute),
+                false).Cast<IncludeInReportAttribute>().Single().IncludeInReport : true;
+
+            return includeProperty;
+        }
     }
 }
