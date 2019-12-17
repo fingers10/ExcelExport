@@ -1,4 +1,4 @@
-namespace Fingers10.ExcelExport.Extensions.Attributes
+namespace Fingers10.ExcelExport.Attributes
 {
     public class NestedIncludeInReportAttribute : IncludeInReportAttribute
     {
