@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+using System;﻿
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
@@ -21,12 +22,22 @@ namespace Fingers10.ExcelExport.Extensions
             return displayName ?? propertyDescriptor.DisplayName ?? propertyDescriptor.Name;
         }
 
-        public static bool IncludePropertyInTable(this PropertyInfo propertyInfo)
+        public static object GetPropertyValue(object src, string propName)
         {
-            var includeProperty = propertyInfo.IsDefined(typeof(IncludeInReportAttribute), false) ? propertyInfo.GetCustomAttributes(typeof(IncludeInReportAttribute),
-                false).Cast<IncludeInReportAttribute>().Single().IncludeInReport : true;
+            // https://stackoverflow.com/questions/1954746/using-reflection-in-c-sharp-to-get-properties-of-a-nested-object/29823444#29823444
+            if (src == null) throw new ArgumentException("Value cannot be null.", "src");
+            if (propName == null) throw new ArgumentException("Value cannot be null.", "propName");
 
-            return includeProperty;
+            if (propName.Contains("."))//complex type nested
+            {
+                var temp = propName.Split(new char[] { '.' }, 2);
+                return GetPropertyValue(GetPropertyValue(src, temp[0]), temp[1]);
+            }
+            else
+            {
+                var prop = src.GetType().GetProperty(propName);
+                return prop != null ? prop.GetValue(src, null) : null;
+            }
         }
     }
 }
