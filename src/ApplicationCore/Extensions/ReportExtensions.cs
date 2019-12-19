@@ -1,14 +1,14 @@
 ﻿using ClosedXML.Excel;
 using FastMember;
+using Fingers10.ExcelExport.Attributes;
+using Fingers10.ExcelExport.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Reflection;
-using Fingers10.ExcelExport.Attributes;
-using Fingers10.ExcelExport.Models;
+using System.Threading.Tasks;
 
 namespace Fingers10.ExcelExport.Extensions
 {
