@@ -24,13 +24,27 @@ To export/download the `IEnumerable<T>` data as an excel file, add action method
 # Give a Star ⭐️
 If you liked `ExcelExport` project or if it helped you, please give a star ⭐️ for this repository. That will not only help strengthen our .NET community but also improve development skills for .NET developers in around the world. Thank you very much 👍
 
-# Column Name
+## Columns 
+### Name
 Column names in Excel Export can be configured using the below attributes
 * `[Display(Name = "")]`
 * `[DisplayName(“”)]`
 
+### Report Setup
+To customize the Excel Column display in your report, use the following attribute
+* `[IncludeInReport]`
+* `[NestedIncludeInReport]`
+
+And here are the options,
+
+|Option |Type    |Example                                  |Description|
+|-------|--------|-----------------------------------------|-----------|
+|Order  |`int`   |`[IncludeInReport(Order = N)]`           |To control the order of columns in Excel Report|
+
+**Please note:** From **v.2.0.0**, simple properties in your models **with `[IncludeInReport]` attribute** will be displayed in excel report. You can add any level of nesting to your models using **`[NestedIncludeInReport]` attribute**.
+
 # NuGet:
-* [Fingers10.ExcelExport](https://www.nuget.org/packages/Fingers10.ExcelExport/) **v1.0.0**
+* [Fingers10.ExcelExport](https://www.nuget.org/packages/Fingers10.ExcelExport/) **v2.0.0**
 
 ## Package Manager:
 ```c#
@@ -49,13 +63,17 @@ public class DemoExcel
 {
     public int Id { get; set; }
 
+    [IncludeInReport(Order = 1)]
     public string Name { get; set; }
 
+    [IncludeInReport(Order = 2)]
     public string Position { get; set; }
 
     [Display(Name = "Office")]
+    [IncludeInReport(Order = 3)]
     public string Offices { get; set; }
 
+    [NestedIncludeInReport]
     public DemoNestedLevelOne DemoNestedLevelOne { get; set; }
 }
 ```
@@ -65,11 +83,14 @@ public class DemoExcel
 ```c#
 public class DemoNestedLevelOne
 {
+    [IncludeInReport(Order = 4)]
     public short? Experience { get; set; }
 
     [DisplayName("Extn")]
+    [IncludeInReport(Order = 5)]
     public int? Extension { get; set; }
 
+    [NestedIncludeInReport]
     public DemoNestedLevelTwo DemoNestedLevelTwos { get; set; }
 }
 ```
@@ -80,8 +101,10 @@ public class DemoNestedLevelOne
 public class DemoNestedLevelTwo
 {
     [DisplayName("Start Date")]
+    [IncludeInReport(Order = 6)]
     public DateTime? StartDates { get; set; }
 
+    [IncludeInReport(Order = 7)]
     public long? Salary { get; set; }
 }
 ```
@@ -117,7 +140,7 @@ public async Task<IActionResult> OnGetExcelAsync()
 # Other Nuget Packages Used
 * ClosedXML (0.94.2) - For Generating Excel Bytes
 * Microsoft.AspNetCore.Mvc.Abstractions (2.2.0) - For using IActionResult
-* System.ComponentModel.Annotations (4.6.0) - For Reading Column Names from Annotations
+* System.ComponentModel.Annotations (4.7.0) - For Reading Column Names from Annotations
  
 # Author
 * **Abdul Rahman** - Software Developer - from India. Software Consultant, Architect, Freelance Lecturer/Developer and Web Geek.  
