@@ -1,5 +1,4 @@
 ﻿using ClosedXML.Excel;
-using FastMember;
 using Fingers10.ExcelExport.Attributes;
 using Fingers10.ExcelExport.Models;
 using System;
@@ -8,6 +7,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Fingers10.ExcelExport.Extensions
@@ -82,19 +82,19 @@ namespace Fingers10.ExcelExport.Extensions
             }
         }
 
-        public static DataTable ToFastDataTable<T>(this IEnumerable<T> data, string name)
-        {
-            //For Excel reference
-            //https://stackoverflow.com/questions/564366/convert-generic-list-enumerable-to-datatable
-            // To restrict order or specific property
-            //ObjectReader.Create(data, "Id", "Name", "Description")
-            using (var reader = ObjectReader.Create(data))
-            {
-                var table = new DataTable(name ?? typeof(T).Name);
-                table.Load(reader);
-                return table;
-            }
-        }
+        //public static DataTable ToFastDataTable<T>(this IEnumerable<T> data, string name)
+        //{
+        //    //For Excel reference
+        //    //https://stackoverflow.com/questions/564366/convert-generic-list-enumerable-to-datatable
+        //    // To restrict order or specific property
+        //    //ObjectReader.Create(data, "Id", "Name", "Description")
+        //    using (var reader = ObjectReader.Create(data))
+        //    {
+        //        var table = new DataTable(name ?? typeof(T).Name);
+        //        table.Load(reader);
+        //        return table;
+        //    }
+        //}
 
         public static async Task<byte[]> GenerateExcelForDataTableAsync<T>(this IEnumerable<T> data, string name)
         {
@@ -110,6 +110,37 @@ namespace Fingers10.ExcelExport.Extensions
                     return stream.ToArray();
                 }
             }
+        }
+
+        public static async Task<byte[]> GenerateCSVForDataAsync<T>(this IEnumerable<T> data) 
+        {
+            var builder = new StringBuilder();
+            var stringWriter = new StringWriter(builder);
+
+            await Task.Run(() =>
+            {
+                var columns = GetColumnsFromModel(typeof(T)).ToDictionary(x => x.Name, x => x.Value).OrderBy(x => x.Value.Order);
+
+                foreach (var column in columns)
+                {
+                    stringWriter.Write(column.Key);
+                    stringWriter.Write(", ");
+                }
+                stringWriter.WriteLine();
+
+                foreach (T item in data)
+                {
+                    var properties = item.GetType().GetProperties();
+                    foreach (var prop in columns)
+                    {
+                        stringWriter.Write(PropertyExtensions.GetPropertyValue(item, prop.Value.Path));
+                        stringWriter.Write(", ");
+                    }
+                    stringWriter.WriteLine();
+                }
+            });
+
+            return Encoding.UTF8.GetBytes(builder.ToString());
         }
     }
 }
