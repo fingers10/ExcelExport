@@ -15,11 +15,11 @@
 [![GitHub issues-closed](https://img.shields.io/github/issues-closed/fingers10/ExcelExport.svg)](https://GitHub.com/fingers10/ExcelExport/issues?q=is%3Aissue+is%3Aclosed)
 
 # Excel Export
-Simple classes to generate Excel Report in ASP.NET Core.
+Simple classes to generate Excel/CSV Report in ASP.NET Core.
 
-To export/download the `IEnumerable<T>` data as an excel file, add action method in your controller as shown below. Return the data as `ExcelResult<T>` by passing filtered/ordered data, excel sheet name and excel file name. **ExcelResult** Action Result that I have added in the Nuget package. This will take care of converting your data as excel file and return it back to browser.
+To export/download the `IEnumerable<T>` data as an excel file, add action method in your controller as shown below. Return the data as `ExcelResult<T>`/`CSVResult<T>` by passing filtered/ordered data, sheet name and file name. **ExcelResult**/**CSVResult** Action Result that I have added in the Nuget package. This will take care of converting your data as excel/csv file and return it back to browser.
 
->**Note: This tutorial contains example for downloading/exporting excel from Asp.Net Core Backend.**
+>**Note: This tutorial contains example for downloading/exporting excel/csv from Asp.Net Core Backend.**
 
 # Give a Star ⭐️
 If you liked `ExcelExport` project or if it helped you, please give a star ⭐️ for this repository. That will not only help strengthen our .NET community but also improve development skills for .NET developers in around the world. Thank you very much 👍
@@ -44,7 +44,7 @@ And here are the options,
 **Please note:** From **v.2.0.0**, simple properties in your models **with `[IncludeInReport]` attribute** will be displayed in excel report. You can add any level of nesting to your models using **`[NestedIncludeInReport]` attribute**.
 
 # NuGet:
-* [Fingers10.ExcelExport](https://www.nuget.org/packages/Fingers10.ExcelExport/) **v2.0.0**
+* [Fingers10.ExcelExport](https://www.nuget.org/packages/Fingers10.ExcelExport/) **v3.0.0**
 
 ## Package Manager:
 ```c#
@@ -118,6 +118,13 @@ public async Task<IActionResult> GetExcel()
     var results = await _demoService.GetDataAsync();
     return new ExcelResult<DemoExcel>(results, "Demo Sheet Name", "Fingers10");
 }
+
+public async Task<IActionResult> GetCSV()
+{
+    // Get you IEnumerable<T> data
+    var results = await _demoService.GetDataAsync();
+    return new CSVResult<DemoExcel>(results, "Fingers10");
+}
 ```
  
 ## Page Handler
@@ -129,6 +136,13 @@ public async Task<IActionResult> OnGetExcelAsync()
     var results = await _demoService.GetDataAsync();
     return new ExcelResult<DemoExcel>(results, "Demo Sheet Name", "Fingers10");
 }
+
+public async Task<IActionResult> OnGetCSVAsync()
+{
+     // Get you IEnumerable<T> data
+    var results = await _demoService.GetDataAsync();
+    return new CSVResult<DemoExcel>(results, "Fingers10");
+}
 ```
 
 # Target Platform
@@ -138,7 +152,7 @@ public async Task<IActionResult> OnGetExcelAsync()
 * Visual Studio Community 2019
  
 # Other Nuget Packages Used
-* ClosedXML (0.94.2) - For Generating Excel Bytes
+* ClosedXML (0.95.0) - For Generating Excel Bytes
 * Microsoft.AspNetCore.Mvc.Abstractions (2.2.0) - For using IActionResult
 * System.ComponentModel.Annotations (4.7.0) - For Reading Column Names from Annotations
  
