@@ -145,6 +145,50 @@ public async Task<IActionResult> OnGetCSVAsync()
 }
 ```
 
+## Pass columns definitions as a parameter to the constructor
+
+```c#
+public class Employee
+{
+    public string EmployeeName { get; set; }
+    public DateTime? StartDate { get; set; }
+    public long? BasicSalary { get; set; }
+}
+```
+
+* Excel
+```c#
+public async Task<IActionResult> OnGetExcelAsync()
+{
+     // Get you IEnumerable<T> data
+    var results = await _demoService.GetDataAsync();
+    return new ExcelResult<Employee>(
+            data: results,
+            sheetName: "Fingers10",
+            fileName: "Fingers10",
+            ("EmployeeName", "Employee Name", 1), // prop name, label, order
+            ("StartDate", "Start Date", 2),
+            ("BasicSalary", "Basic Salary", 3)
+    );
+}
+```
+
+* CSV
+```c#
+public async Task<IActionResult> OnGetExcelAsync()
+{
+     // Get you IEnumerable<T> data
+    var results = await _demoService.GetDataAsync();
+    return new CSVResult<Employee>(
+            data: results,
+            fileName: "Fingers10",
+            ("EmployeeName", "Employee Name", 1), // prop name, label, order
+            ("StartDate", "Start Date", 2),
+            ("BasicSalary", "Basic Salary", 3)
+    );
+}
+```
+
 # Target Platform
 * .Net Standard 2.0
  
