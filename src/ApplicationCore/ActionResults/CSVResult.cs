@@ -1,4 +1,5 @@
 ﻿using Fingers10.ExcelExport.Extensions;
+using Fingers10.ExcelExport.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -18,12 +19,47 @@ namespace Fingers10.ExcelExport.ActionResults
         }
 
         public string FileName { get; }
+        List<ExcelColumnDefinition> Columns { get; set; }
+
+        /// <summary>
+        /// this func to set columns definitions
+        /// (column name, label, order)
+        /// </summary>
+        /// <param name="definitions"></param>
+        public void SetDefinitions(params (string, string, int)[] definitions)
+        {
+            if (definitions == null || definitions.Length == 0)
+            {
+                return;
+            }
+
+            Columns = new List<ExcelColumnDefinition>();
+
+            foreach (var item in definitions)
+            {
+                Columns.Add(new ExcelColumnDefinition(item.Item1, item.Item2, item.Item3));
+            }
+        }
+
+        public CSVResult(IEnumerable<T> data, string fileName, params (string, string, int)[] definitions)
+        {
+            _data = data;
+            FileName = fileName;
+
+            SetDefinitions(definitions);
+        }
 
         public async Task ExecuteResultAsync(ActionContext context)
         {
             try
             {
-                var csvBytes = await _data.GenerateCSVForDataAsync();
+                byte[] csvBytes;
+
+                if (Columns != null && Columns.Count > 0)
+                    csvBytes = await _data.GenerateCSVForDataAsync(Columns);
+                else
+                    csvBytes = await _data.GenerateCSVForDataAsync();
+
                 WriteExcelFileAsync(context.HttpContext, csvBytes);
 
             }
