@@ -17,7 +17,7 @@ namespace Fingers10.ExcelExport.Extensions
         {
             var propertyDescriptor = propertyInfo.GetPropertyDescriptor();
             var displayName = propertyInfo.IsDefined(typeof(DisplayAttribute), false) ? propertyInfo.GetCustomAttributes(typeof(DisplayAttribute),
-                false).Cast<DisplayAttribute>().Single().Name : null;
+                false).Cast<DisplayAttribute>().Single().GetName() : null;
 
             return displayName ?? propertyDescriptor.DisplayName ?? propertyDescriptor.Name;
         }
