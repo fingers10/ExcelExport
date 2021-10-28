@@ -28,6 +28,7 @@ If you liked `ExcelExport` project or if it helped you, please give a star ⭐�
 ### Name
 Column names in Excel Export can be configured using the below attributes
 * `[Display(Name = "")]`
+* `[Display(Name = "", ResourceType = typeof(MyResourceFile))]`
 * `[DisplayName(“”)]`
 
 ### Report Setup
