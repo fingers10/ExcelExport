@@ -112,10 +112,12 @@ namespace Fingers10.ExcelExport.Extensions
             }
         }
 
-        public static async Task<byte[]> GenerateCSVForDataAsync<T>(this IEnumerable<T> data) 
+        public static async Task<byte[]> GenerateCSVForDataAsync<T>(this IEnumerable<T> data, bool spaceAfterComma) 
         {
             var builder = new StringBuilder();
             var stringWriter = new StringWriter(builder);
+
+            string comma = spaceAfterComma ? " " : string.Empty;
 
             await Task.Run(() =>
             {
@@ -124,7 +126,7 @@ namespace Fingers10.ExcelExport.Extensions
                 foreach (var column in columns)
                 {
                     stringWriter.Write(column.Key);
-                    stringWriter.Write(", ");
+                    stringWriter.Write(","+ comma);
                 }
                 stringWriter.WriteLine();
 
@@ -134,7 +136,7 @@ namespace Fingers10.ExcelExport.Extensions
                     foreach (var prop in columns)
                     {
                         stringWriter.Write(PropertyExtensions.GetPropertyValue(item, prop.Value.Path));
-                        stringWriter.Write(", ");
+                        stringWriter.Write("," + comma);
                     }
                     stringWriter.WriteLine();
                 }
