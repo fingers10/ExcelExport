@@ -11,19 +11,21 @@ namespace Fingers10.ExcelExport.ActionResults
     {
         private readonly IEnumerable<T> _data;
 
-        public CSVResult(IEnumerable<T> data, string fileName)
+        public CSVResult(IEnumerable<T> data, string fileName, bool spaceAfterComma)
         {
             _data = data;
             FileName = fileName;
+            SpaceAfterComma = spaceAfterComma;
         }
 
         public string FileName { get; }
+        public bool SpaceAfterComma { get; }
 
         public async Task ExecuteResultAsync(ActionContext context)
         {
             try
             {
-                var csvBytes = await _data.GenerateCSVForDataAsync();
+                var csvBytes = await _data.GenerateCSVForDataAsync(SpaceAfterComma);
                 WriteExcelFileAsync(context.HttpContext, csvBytes);
 
             }
@@ -31,7 +33,7 @@ namespace Fingers10.ExcelExport.ActionResults
             {
                 Console.WriteLine(e);
 
-                var errorBytes = await new List<T>().GenerateCSVForDataAsync();
+                var errorBytes = await new List<T>().GenerateCSVForDataAsync(SpaceAfterComma);
                 WriteExcelFileAsync(context.HttpContext, errorBytes);
             }
         }
