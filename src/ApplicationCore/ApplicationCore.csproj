@@ -10,16 +10,16 @@
     <Description>Classes to generate Excel Report in ASP.NET</Description>
     <PackageTags>Excel Export, CSV Export</PackageTags>
     <PackageProjectUrl>https://github.com/fingers10/ExcelExport</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/fingers10/ExcelExport</RepositoryUrl>
+    <RepositoryUrl>https://github.com/haithambasim/ExcelExport</RepositoryUrl>
     <RepositoryType>Public</RepositoryType>
-    <PackageReleaseNotes>1. Added support for CSV Export
-2. Updated Nuget Dependencies
-3. Removed Package Icon</PackageReleaseNotes>
+    <PackageReleaseNotes></PackageReleaseNotes>
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <Copyright>Copyright (c) 2019 Abdul Rahman (@fingers10)</Copyright>
-    <Version>3.0.0</Version>
-    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+    <PackageId>HBH.Fingers10.ExcelExport</PackageId>
+    <Product>HBH.Fingers10.ExcelExport</Product>
   </PropertyGroup>
 
   <ItemGroup>

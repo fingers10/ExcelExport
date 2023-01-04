@@ -81,10 +81,7 @@ namespace Fingers10.ExcelExport.ActionResults
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-
-                var errorBytes = await new List<T>().GenerateExcelForDataTableAsync(SheetName);
-                WriteExcelFileAsync(context.HttpContext, errorBytes);
+                throw e;
             }
         }
 
