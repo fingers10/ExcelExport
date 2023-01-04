@@ -16,8 +16,16 @@ namespace Fingers10.ExcelExport.Extensions
     {
         public static async Task<DataTable> ToDataTableAsync<T>(this IEnumerable<T> data, string name)
         {
-            var columns = GetColumnsFromModel(typeof(T)).ToDictionary(x => x.Name, x => x.Value).OrderBy(x => x.Value.Order);
+            var columns = typeof(T).GetCustomAttributes<IncludeAllInReportAttribute>().Any()
+                ? GetAllColumnsFromModel(typeof(T)).ToDictionary(x => x.Name, x => x.Value).OrderBy(x => x.Value.Order).ToList()
+                : GetColumnsFromModel(typeof(T)).ToDictionary(x => x.Name, x => x.Value).OrderBy(x => x.Value.Order).ToList();
+
             var table = new DataTable(name ?? typeof(T).Name);
+
+            if (columns.Count == 0)
+            {
+                return table;
+            }
 
             await Task.Run(() =>
             {
@@ -43,11 +51,17 @@ namespace Fingers10.ExcelExport.Extensions
 
         public static async Task<DataTable> ToDataTableAsync<T>(this IEnumerable<T> data, string name, List<ExcelColumnDefinition> cols = null)
         {
-            var columns = cols.OrderBy(x => x.Order);
+            var table = new DataTable(name ?? typeof(T).Name);
+
+            if (cols == null)
+                return table;
+
+            var columns = cols.OrderBy(x => x.Order).ToList();
 
             var properties = typeof(T).GetProperties().ToList();
 
-            var table = new DataTable(name ?? typeof(T).Name);
+            if (columns.Count == 0)
+                return table;
 
             await Task.Run(() =>
             {
@@ -73,10 +87,33 @@ namespace Fingers10.ExcelExport.Extensions
             return table;
         }
 
+        public static IEnumerable<Column> GetAllColumnsFromModel(Type parentClass, string parentName = null)
+        {
+            var properties = parentClass.GetProperties()
+                .Where(p => !p.GetCustomAttributes<ExcludeFromReportAttribute>().Any());
+
+            var order = 0;
+
+            foreach (var prop in properties)
+            {
+                order++;
+                yield return new Column
+                {
+                    Name = prop.GetPropertyDisplayName(),
+                    Value = new ColumnValue
+                    {
+                        Order = order,
+                        Path = string.IsNullOrWhiteSpace(parentName) ? prop.Name : $"{parentName}.{prop.Name}",
+                        PropertyDescriptor = prop.GetPropertyDescriptor()
+                    }
+                };
+            }
+        }
+
         public static IEnumerable<Column> GetColumnsFromModel(Type parentClass, string parentName = null)
         {
             var complexReportProperties = parentClass.GetProperties()
-                       .Where(p => p.GetCustomAttributes<NestedIncludeInReportAttribute>().Any());
+                       .Where(p => p.GetCustomAttributes<NestedIncludeInReportAttribute>().Any()).ToList();
 
             var properties = parentClass.GetProperties()
                        .Where(p => p.GetCustomAttributes<IncludeInReportAttribute>().Any());
@@ -102,7 +139,6 @@ namespace Fingers10.ExcelExport.Extensions
                 foreach (var parentProperty in complexReportProperties)
                 {
                     var parentType = parentProperty.PropertyType;
-                    var parentAttribute = parentProperty.GetCustomAttribute<NestedIncludeInReportAttribute>();
 
                     var complexProperties = GetColumnsFromModel(parentType, string.IsNullOrWhiteSpace(parentName) ? parentProperty.Name : $"{parentName}.{parentProperty.Name}");
 
@@ -167,7 +203,7 @@ namespace Fingers10.ExcelExport.Extensions
 
             await Task.Run(() =>
             {
-                var columns = GetColumnsFromModel(typeof(T)).ToDictionary(x => x.Name, x => x.Value).OrderBy(x => x.Value.Order);
+                var columns = GetColumnsFromModel(typeof(T)).ToDictionary(x => x.Name, x => x.Value).OrderBy(x => x.Value.Order).ToList();
 
                 foreach (var column in columns)
                 {
@@ -178,7 +214,6 @@ namespace Fingers10.ExcelExport.Extensions
 
                 foreach (T item in data)
                 {
-                    var properties = item.GetType().GetProperties();
                     foreach (var prop in columns)
                     {
                         stringWriter.Write(PropertyExtensions.GetPropertyValue(item, prop.Value.Path));
@@ -198,7 +233,7 @@ namespace Fingers10.ExcelExport.Extensions
 
             await Task.Run(() =>
             {
-                var columns = cols.OrderBy(x => x.Order);
+                var columns = cols?.OrderBy(x => x.Order).ToList() ?? new List<ExcelColumnDefinition>();
 
                 foreach (var column in columns)
                 {
@@ -209,7 +244,6 @@ namespace Fingers10.ExcelExport.Extensions
 
                 foreach (T item in data)
                 {
-                    var properties = item.GetType().GetProperties();
                     foreach (var prop in columns)
                     {
                         stringWriter.Write(PropertyExtensions.GetPropertyValue(item, prop.Name));
