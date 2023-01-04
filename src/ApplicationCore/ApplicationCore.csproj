@@ -16,7 +16,7 @@
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <Copyright>Copyright (c) 2019 Abdul Rahman (@fingers10)</Copyright>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
     <PackageId>HBH.Fingers10.ExcelExport</PackageId>
     <Product>HBH.Fingers10.ExcelExport</Product>
