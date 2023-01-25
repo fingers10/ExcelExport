@@ -56,18 +56,16 @@ namespace Fingers10.ExcelExport.Extensions
             if (cols == null)
                 return table;
 
-            var columns = cols.OrderBy(x => x.Order).ToList();
-
             var properties = typeof(T).GetProperties().ToList();
 
-            if (columns.Count == 0)
+            if (cols.Count == 0)
                 return table;
 
             await Task.Run(() =>
             {
-                foreach (var column in columns)
+                foreach (var column in cols)
                 {
-                    var prop = properties.Where(x => x.Name == column.Name).FirstOrDefault();
+                    var prop = properties.FirstOrDefault(x => x.Name == column.Name);
                     table.Columns.Add(column.Label, Nullable.GetUnderlyingType(prop.GetPropertyDescriptor().PropertyType) ?? prop.GetPropertyDescriptor().PropertyType);
                 }
 
@@ -75,7 +73,7 @@ namespace Fingers10.ExcelExport.Extensions
                 {
                     var row = table.NewRow();
 
-                    foreach (var prop in columns)
+                    foreach (var prop in cols)
                     {
                         row[prop.Label] = PropertyExtensions.GetPropertyValue(item, prop.Name) ?? DBNull.Value;
                     }
@@ -150,20 +148,6 @@ namespace Fingers10.ExcelExport.Extensions
             }
         }
 
-        //public static DataTable ToFastDataTable<T>(this IEnumerable<T> data, string name)
-        //{
-        //    //For Excel reference
-        //    //https://stackoverflow.com/questions/564366/convert-generic-list-enumerable-to-datatable
-        //    // To restrict order or specific property
-        //    //ObjectReader.Create(data, "Id", "Name", "Description")
-        //    using (var reader = ObjectReader.Create(data))
-        //    {
-        //        var table = new DataTable(name ?? typeof(T).Name);
-        //        table.Load(reader);
-        //        return table;
-        //    }
-        //}
-
         public static async Task<byte[]> GenerateExcelForDataTableAsync<T>(this IEnumerable<T> data, string name, List<ExcelColumnDefinition> columns = null)
         {
             var table = await data.ToDataTableAsync(name, columns);
@@ -233,9 +217,9 @@ namespace Fingers10.ExcelExport.Extensions
 
             await Task.Run(() =>
             {
-                var columns = cols?.OrderBy(x => x.Order).ToList() ?? new List<ExcelColumnDefinition>();
+                cols = cols ?? new List<ExcelColumnDefinition>();
 
-                foreach (var column in columns)
+                foreach (var column in cols)
                 {
                     stringWriter.Write(column.Label);
                     stringWriter.Write(", ");
@@ -244,7 +228,7 @@ namespace Fingers10.ExcelExport.Extensions
 
                 foreach (T item in data)
                 {
-                    foreach (var prop in columns)
+                    foreach (var prop in cols)
                     {
                         stringWriter.Write(PropertyExtensions.GetPropertyValue(item, prop.Name));
                         stringWriter.Write(", ");
@@ -254,6 +238,32 @@ namespace Fingers10.ExcelExport.Extensions
             });
 
             return Encoding.UTF8.GetBytes(builder.ToString());
+        }
+
+
+        public static List<ExcelColumnDefinition> SetDefinitions(this List<ExcelColumnDefinition> columns, List<ExcelColumnDefinition> definitions)
+        {
+            if (definitions == null || definitions.Count == 0)
+            {
+                return new List<ExcelColumnDefinition>();
+            }
+
+            columns.AddRange(definitions);
+
+            return columns;
+        }
+
+        public static List<ExcelColumnDefinition> SetDefinitions(this List<ExcelColumnDefinition> columns, params (string, string, int)[] definitions)
+        {
+            if (definitions == null || definitions.Length == 0)
+            {
+                return columns;
+            }
+
+
+            columns.AddRange(definitions.OrderBy(x => x.Item3).ToList().Select(item => new ExcelColumnDefinition(item.Item1, item.Item2)));
+
+            return columns;
         }
     }
 }
