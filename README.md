@@ -34,6 +34,8 @@ Column names in Excel Export can be configured using the below attributes
 To customize the Excel Column display in your report, use the following attribute
 * `[IncludeInReport]`
 * `[NestedIncludeInReport]`
+* `[IncludeAllInReportAttribute]`
+* `[ExcludeFromReportAttribute]`
 
 And here are the options,
 
@@ -145,8 +147,45 @@ public async Task<IActionResult> OnGetCSVAsync()
 }
 ```
 
+## Include All Modal Columns In Report using IncludeAllInReportAttribute
+
+```c#
+[IncludeAllInReport]
+public class DemoExcel
+{
+    public int Id { get; set; }
+
+    public string Name { get; set; }
+
+    public string Position { get; set; }
+
+    public string Offices { get; set; }
+}
+```
+
+## Exclude some Columns from Report using ExcludeFromReportAttribute
+
+for example here offices column is excluded
+```c#
+[IncludeAllInReport]
+public class DemoExcel
+{
+    public int Id { get; set; }
+
+    public string Name { get; set; }
+
+    public string Position { get; set; }
+
+    [ExcludeFromReport]
+    public string Offices { get; set; }
+}
+```
+
+
+
 ## Pass columns definitions as a parameter to the constructor
 
+For example if you have this Modal class
 ```c#
 public class Employee
 {
@@ -156,7 +195,11 @@ public class Employee
 }
 ```
 
-* Excel
+## You have two ways to pass columns definitions
+
+## 1 - Pass columns definitions as tuple params
+
+Excel
 ```c#
 public async Task<IActionResult> OnGetExcelAsync()
 {
@@ -188,6 +231,48 @@ public async Task<IActionResult> OnGetExcelAsync()
     );
 }
 ```
+
+## 2 - Pass columns definitions as List of ExcelColumnDefinition
+
+Excel
+```c#
+public async Task<IActionResult> OnGetExcelAsync()
+{
+     // Get you IEnumerable<T> data
+    var results = await _demoService.GetDataAsync();
+    return new ExcelResult<Employee>(
+            data: results,
+            sheetName: "Fingers10",
+            fileName: "Fingers10",
+            new List<ExcelColumnDefinition>()
+            {
+                new ("EmployeeName", "Employee Name"),
+                new ("StartDate", "Start Date"),
+                new ("BasicSalary", "Basic Salary")
+            }
+    );
+}
+```
+
+* CSV
+```c#
+public async Task<IActionResult> OnGetExcelAsync()
+{
+     // Get you IEnumerable<T> data
+    var results = await _demoService.GetDataAsync();
+    return new CSVResult<Employee>(
+            data: results,
+            fileName: "Fingers10",
+            new List<ExcelColumnDefinition>()
+            {
+                new ("EmployeeName", "Employee Name"),
+                new ("StartDate", "Start Date"),
+                new ("BasicSalary", "Basic Salary")
+            }
+    );
+}
+```
+
 
 # Target Platform
 * .Net Standard 2.0
