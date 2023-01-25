@@ -234,6 +234,8 @@ public async Task<IActionResult> OnGetExcelAsync()
 
 ## 2 - Pass columns definitions as List of ExcelColumnDefinition
 
+## in this way the columns are ordered based on the order of the passed list
+
 Excel
 ```c#
 public async Task<IActionResult> OnGetExcelAsync()
